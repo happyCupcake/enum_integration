@@ -48,9 +48,11 @@ def append_proto_message_from_CAN_message(file, can_msg: can.message.Message):
             )
 
         elif sig.choices != None and sig.length != 1:
-            enum_name = can_msg.name.lower() + "_" + create_field_name(sig.name) + "_enum\n"
+            enum_name = can_msg.name.lower() + "_" + create_field_name(sig.name) + "_enum"
             file.write(f"    enum {enum_name}")
             file.write(f" {{")
+            file.write("\n")
+
             field_name = "test"
 
             for choice_value, choice_name in sig.choices.items():
@@ -104,7 +106,9 @@ def append_proto_message_from_CAN_message(file, can_msg: can.message.Message):
 #     path_to_dbc = sys.argv[1]
 # else:
     # path_to_dbc = os.environ.get('DBC_PATH')
-#clfull_path = os.path.join("./", "hytech.dbc")
+#full_path = os.path.join("./", "hytech.dbc")
+
+#TESTING. COMMENT OUT
 full_path = "/Users/mrinalijain/src/enum_integration/hytech.dbc"
 db = cantools.database.load_file(full_path)
 with open("hytech.proto", "w+") as proto_file:
