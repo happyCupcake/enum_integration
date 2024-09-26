@@ -23,6 +23,7 @@ def append_proto_message_from_CAN_message(file, can_msg: can.message.Message):
     # if the msg has a conversion, we know that the value with be a float
     file_lines = []
     msgname = can_msg.name
+    line = ""
     # type and then name
     file.write("message " + msgname.lower() + " {\n")
     line_index = 0
@@ -46,13 +47,14 @@ def append_proto_message_from_CAN_message(file, can_msg: can.message.Message):
                 + ";"
             )
 
-        elif sig.choices != None and sig.length is not 1:
-            enum_name = can_msg.name.lower() + "_" + create_field_name(sig.name) + "_enum"
+        elif sig.choices != None and sig.length != 1:
+            enum_name = can_msg.name.lower() + "_" + create_field_name(sig.name) + "_enum\n"
             file.write(f"    enum {enum_name}")
             file.write(f" {{")
+            field_name = "test"
 
             for choice_value, choice_name in sig.choices.items():
-                choice_name_enum = create_field_name(choice_name.upper())
+                choice_name_enum = create_field_name(str(choice_name).upper())
                 file.write(f"        {choice_name_enum} = {choice_value};\n")
             file.write("    }\n")
             # Write the enum field in the message
@@ -98,11 +100,12 @@ def append_proto_message_from_CAN_message(file, can_msg: can.message.Message):
 
 # load dbc file from the package location
 
-if(len (sys.argv) > 1):
-    path_to_dbc = sys.argv[1]
-else:
-    path_to_dbc = os.environ.get('DBC_PATH')
-full_path = os.path.join(path_to_dbc, "hytech.dbc")
+# if(len (sys.argv) > 1):
+#     path_to_dbc = sys.argv[1]
+# else:
+    # path_to_dbc = os.environ.get('DBC_PATH')
+#clfull_path = os.path.join("./", "hytech.dbc")
+full_path = "/Users/mrinalijain/src/enum_integration/hytech.dbc"
 db = cantools.database.load_file(full_path)
 with open("hytech.proto", "w+") as proto_file:
     proto_file.write('syntax = "proto3";\n\n')
